@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Suweema Bag Center</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f1ed92">
+  <link rel="apple-touch-icon" href="images/icon-192x192.png">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Palette */
+    :root{
+      --accent: #f1ed92; /* pale yellow */
+      --dark: #343434;   /* primary dark */
+      --white: #ffffff;
+      --muted: rgba(52,52,52,0.65);
+      --card-shadow: 0 8px 20px rgba(52,52,52,0.08);
+      --glass: rgba(255,255,255,0.6);
+    }
+
+    /* Base */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    html,body{height:100%;}
+    body{
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin:0;
+      background: linear-gradient(180deg, var(--accent) 0%, #fff 40%);
+      color: var(--dark);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding: 16px;
+    }
+
+    /* Container */
+    .container{ max-width: 980px; margin: 0 auto; padding-bottom: 48px; }
+
+    /* Header */
+    .site-header{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      background: linear-gradient(90deg, rgba(52,52,52,0.06), rgba(0,0,0,0.02));
+      padding: 14px; border-radius: 14px; box-shadow: var(--card-shadow);
+      margin-bottom: 20px; backdrop-filter: blur(4px);
+    }
+    .brand { display:flex; gap:12px; align-items:center; }
+    .brand-mark{
+      width:46px; height:46px; border-radius:10px; background: var(--dark);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--accent); font-weight:700; font-size:18px;
+      box-shadow: 0 6px 18px rgba(52,52,52,0.12);
+    }
+    .brand h1{ font-size:20px; margin:0; font-weight:700; color:var(--dark); }
+    .brand p{ margin:0; font-size:12px; color:var(--muted); }
+    .header-note{ color: var(--muted); }
+
+    /* Card */
+    .card{ background: var(--white); border-radius: 14px; padding: 18px; box-shadow: var(--card-shadow); }
+    .card + .card{ margin-top: 18px; }
+
+    /* Accordion for Mobile */
+    .card-header{ display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+    .card-header .arrow{ transition: transform 0.2s ease; }
+    .card.collapsed .card-header .arrow{ transform: rotate(-90deg); }
+    .card-content{ margin-top: 8px; }
+    @media (max-width: 768px){
+      .card.collapsible .card-content{ display:none; }
+      .card.collapsible.expanded .card-content{ display:block; }
+    }
+
+
+    /* Headings */
+    h2 { margin:0 0 8px 0; font-weight:700; color:var(--dark); }
+    h3 { margin:12px 0 6px 0; font-weight:600; color:var(--dark); }
+
+    /* Inputs & buttons */
+    .input-field{
+      width:100%; padding:12px 14px; border-radius:10px; border:1px solid rgba(52,52,52,0.08);
+      background: linear-gradient(180deg, rgba(0,0,0,0.01), rgba(0,0,0,0.00));
+      outline:none; font-size:14px; color:var(--dark); box-sizing:border-box;
+    }
+    .input-field:focus{ box-shadow: 0 6px 18px rgba(241,237,146,0.14); border-color: rgba(52,52,52,0.18); }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:12px 16px; border-radius:12px; font-weight:600; cursor:pointer;
+      border: 1px solid transparent; transition: transform .12s ease, box-shadow .12s ease;
+      user-select:none; -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn-primary{
+      background: var(--accent); color: var(--dark); border-color: rgba(52,52,52,0.06);
+      box-shadow: 0 8px 18px rgba(241,237,146,0.12);
+    }
+    .btn-primary:hover{ box-shadow: 0 12px 28px rgba(241,237,146,0.16); }
+    .btn-secondary{ background: transparent; color: var(--dark); border: 1px solid rgba(52,52,52,0.08); }
+
+    /* Alerts */
+    .alert { padding:12px; border-radius:10px; font-weight:600; }
+    .alert-success{ background: linear-gradient(90deg, rgba(34,197,94,0.06), rgba(34,197,94,0.02)); color: #065f46; }
+    .alert-error{ background: linear-gradient(90deg, rgba(239,68,68,0.06), rgba(239,68,68,0.02)); color: #7f1d1d; }
+
+    /* Tables - responsive */
+    .table-wrap{ width:100%; overflow:auto; border-radius:10px; }
+    table{ width:100%; border-collapse:collapse; min-width:640px; }
+    th, td{ padding:12px 10px; text-align:left; font-size:13px; color:var(--dark); border-bottom: 1px solid rgba(52,52,52,0.04); }
+    thead th{ background: transparent; color:var(--muted); font-weight:600; font-size:12px; letter-spacing:.6px; text-transform:uppercase; }
+    tr.item-row:hover{ background: linear-gradient(90deg, rgba(52,52,52,0.02), rgba(52,52,52,0.01)); }
+
+    /* Mobile cards */
+    .card-item{ display:flex; flex-direction:column; gap:8px; }
+    .card-item .meta{ font-size:13px; color:var(--muted); }
+
+    /* Small controls */
+    .small-btn{ padding:8px 10px; border-radius:10px; font-size:13px; }
+
+    /* Modal */
+    #editModal{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background: rgba(16,16,16,0.45); z-index:60; padding:16px; }
+    #editModal.active{ display:flex; }
+    #editModal .card{ max-width:520px; width:100%; }
+
+    /* Form layout improvements */
+    .form-row{ display:flex; gap:12px; }
+    .form-row .col{ flex:1; }
+    @media (max-width:768px){
+      .form-row{ flex-direction:column; }
+      .brand h1{ font-size:16px; }
+      .brand-mark{ width:44px; height:44px; font-size:16px; }
+      .header-note{ display:none; }
+      table{ min-width:520px; }
+      body{ padding:12px; }
+    }
+
+    /* Make interactive elements easier to tap on mobile */
+    button, .btn, input[type="number"], input[type="text"]{ touch-action: manipulation; }
+    .muted{ color:var(--muted); font-size:13px; }
+    .text-right{ text-align:right; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <header class="site-header">
+      <div class="brand">
+        <div class="brand-mark">SB</div>
+        <div>
+          <h1>Suweema Bag Center</h1>
+          <p>Inventory & Orders</p>
+        </div>
+      </div>
+      <div class="header-note"></div>
+    </header>
+
+    <section class="card" aria-labelledby="add-item-title">
+      <h2 id="add-item-title">නව භාණ්ඩ එකතු කරන්න</h2>
+      <form id="addItemForm" autocomplete="off">
+        <div style="margin-bottom:10px;">
+          <label for="itemName" class="muted">භාණ්ඩයේ නම</label>
+          <input id="itemName" name="itemName" class="input-field" placeholder="උදා: ස්කූල් බෑග්" required />
+        </div>
+        <div class="form-row" style="margin-bottom:10px;">
+          <div class="col">
+            <label for="itemQuantity" class="muted">ප්‍රමාණය</label>
+            <input id="itemQuantity" name="itemQuantity" type="number" min="0" class="input-field" placeholder="උදා: 5" required />
+          </div>
+          <div class="col">
+            <label for="itemPrice" class="muted">මිල (රු.)</label>
+            <input id="itemPrice" name="itemPrice" type="number" min="0" step="0.01" class="input-field" placeholder="උදා: 1500" required />
+          </div>
+        </div>
+        <div id="messageBox" class="hidden" role="status" aria-live="polite"></div>
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:10px;">භාණ්ඩය එක් කරන්න</button>
+      </form>
+    </section>
+
+    <section class="card" aria-labelledby="orders-title">
+      <h2 id="orders-title">ඇනවුම් කළමනාකරණය</h2>
+      <form id="orderForm">
+        <h3>භාණ්ඩ තෝරන්න</h3>
+        <div id="inventoryForOrderContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+        <h3 style="margin-top:12px;">ඇනවුම් සාරාංශය</h3>
+        <div id="currentOrderSummary" class="card" style="padding:12px; margin-top:8px;">
+          <p class="muted" style="margin:0;">කිසිදු භාණ්ඩයක් තෝරාගෙන නොමැත.</p>
+        </div>
+        <div class="text-right" style="margin-top:12px;">
+          <p style="margin:0; font-weight:700;">මුළු ඇනවුම් වටිනාකම: <span id="currentOrderValue">රු. 0.00</span></p>
+        </div>
+        <div style="margin-top:12px;">
+          <button type="submit" class="btn btn-primary" style="width:100%;">ඇනවුම සටහන් කරන්න</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card" aria-labelledby="inventory-title">
+      <h2 id="inventory-title">පවතින තොගය</h2>
+      <div class="card-content">
+        <div id="inventoryTableContainer" class="table-wrap" style="margin-top:8px;">
+          <table>
+            <thead><tr><th>භාණ්ඩයේ නම</th><th>ප්‍රමාණය</th><th>මිල</th><th>එකතු කළ දිනය</th><th>ක්‍රියා</th></tr></thead>
+            <tbody id="inventoryTableBody"></tbody>
+          </table>
+        </div>
+        <div id="inventoryCardsContainer" style="display:none; flex-direction:column; gap:10px; margin-top:12px;"></div>
+        <div class="text-right" style="margin-top:12px;">
+          <p style="margin:0; font-weight:700;">මුළු තොගයේ වටිනාකම: <span id="totalValue">රු. 0.00</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card collapsible" id="sold-items-card" aria-labelledby="sold-title">
+      <div class="card-header" onclick="toggleCard('sold-items-card')">
+        <h2 id="sold-title">විකුණපු භාණ්ඩ</h2>
+        <div class="arrow">▼</div>
+      </div>
+      <div class="card-content">
+        <div id="soldTableContainer" class="table-wrap" style="margin-top:8px;">
+          <table>
+            <thead><tr><th>භාණ්ඩයේ නම</th><th>ප්‍රමාණය</th><th>මිල</th><th>විකුණූ දිනය</th><th>ක්‍රියා</th></tr></thead>
+            <tbody id="soldTableBody"></tbody>
+          </table>
+        </div>
+        <div id="soldCardsContainer" style="display:none; flex-direction:column; gap:10px; margin-top:12px;"></div>
+        <div class="text-right" style="margin-top:12px;">
+          <p style="margin:0; font-weight:700;">මුළු විකුණපු භාණ්ඩ වටිනාකම: <span id="totalSoldValue">රු. 0.00</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card collapsible" id="monthly-sales-card" aria-labelledby="monthly-title">
+       <div class="card-header" onclick="toggleCard('monthly-sales-card')">
+        <h2 id="monthly-title">මාසික විකුණුම් සාරාංශය</h2>
+        <div class="arrow">▼</div>
+      </div>
+      <div class="card-content">
+        <div id="monthlySalesTableContainer" class="table-wrap" style="margin-top:8px;">
+          <table>
+            <thead><tr><th>මාසය</th><th>මුළු වටිනාකම</th></tr></thead>
+            <tbody id="monthlySalesTableBody"></tbody>
+          </table>
+        </div>
+        <div id="monthlySalesCardsContainer" style="display:none; flex-direction:column; gap:10px; margin-top:12px;"></div>
+      </div>
+    </section>
+
+    <section class="card collapsible" id="backup-card" aria-labelledby="backup-title">
+      <div class="card-header" onclick="toggleCard('backup-card')">
+        <h2 id="backup-title">Data Backup</h2>
+        <div class="arrow">▼</div>
+      </div>
+      <div class="card-content">
+        <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+          <button onclick="backupData()" class="btn btn-primary" style="min-width:140px;">Backup</button>
+          <button onclick="document.getElementById('restoreInput').click()" class="btn btn-secondary" style="min-width:140px;">Restore</button>
+          <input id="restoreInput" type="file" accept=".json" style="display:none;">
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div id="editModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="card">
+      <h3 style="margin-bottom:10px;">භාණ්ඩය සංස්කරණය කරන්න</h3>
+      <form id="editItemForm">
+        <input type="hidden" id="editItemId"><input type="hidden" id="editItemType">
+        <div style="margin-bottom:8px;">
+          <label class="muted">භාණ්ඩයේ නම</label><input id="editItemName" class="input-field" required />
+        </div>
+        <div style="margin-bottom:8px;">
+          <label class="muted">ප්‍රමාණය</label><input id="editItemQuantity" type="number" class="input-field" min="0" required />
+        </div>
+        <div style="margin-bottom:12px;">
+          <label class="muted">මිල</label><input id="editItemPrice" type="number" class="input-field" min="0" step="0.01" required />
+        </div>
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+          <button type="button" id="cancelEditBtn" class="btn btn-secondary small-btn">අවලංගු කරන්න</button>
+          <button type="submit" class="btn btn-primary small-btn">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // --- State Management ---
+    let inventory = [];
+    let soldItems = [];
+    let monthlySales = {};
+    let currentOrder = [];
+
+    // --- DOM Elements ---
+    const form = document.getElementById('addItemForm');
+    const messageBox = document.getElementById('messageBox');
+    const totalValueDisplay = document.getElementById('totalValue');
+    const totalSoldValueDisplay = document.getElementById('totalSoldValue');
+    const editModal = document.getElementById('editModal');
+    const editItemForm = document.getElementById('editItemForm');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const restoreInput = document.getElementById('restoreInput');
+    const orderForm = document.getElementById('orderForm');
+    const inventoryForOrderContainer = document.getElementById('inventoryForOrderContainer');
+    const currentOrderSummary = document.getElementById('currentOrderSummary');
+    const currentOrderValueDisplay = document.getElementById('currentOrderValue');
+
+    // --- Core Logic ---
+    const updateMonthlySales = (item, isAdding) => {
+      const soldDate = new Date(item.soldDate);
+      if (isNaN(soldDate.getTime())) return;
+      const monthKey = `${soldDate.getFullYear()}-${String(soldDate.getMonth() + 1).padStart(2,'0')}`;
+      const value = item.quantity * item.price;
+      if (isAdding) {
+        monthlySales[monthKey] = (monthlySales[monthKey] || 0) + value;
+      } else {
+        if (monthlySales[monthKey]) {
+          monthlySales[monthKey] -= value;
+          if (monthlySales[monthKey] <= 0) delete monthlySales[monthKey];
+        }
+      }
+    };
+
+    const render = () => {
+      renderInventory();
+      renderSoldItems();
+      renderMonthlySales();
+      updateOrderSummary();
+      handleResponsiveView();
+    };
+    
+    const handleResponsiveView = () => {
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        document.getElementById('inventoryTableContainer').style.display = isMobile ? 'none' : 'block';
+        document.getElementById('inventoryCardsContainer').style.display = isMobile ? 'flex' : 'none';
+        document.getElementById('soldTableContainer').style.display = isMobile ? 'none' : 'block';
+        document.getElementById('soldCardsContainer').style.display = isMobile ? 'flex' : 'none';
+        document.getElementById('monthlySalesTableContainer').style.display = isMobile ? 'none' : 'block';
+        document.getElementById('monthlySalesCardsContainer').style.display = isMobile ? 'flex' : 'none';
+
+        // Initialize collapsible cards on mobile
+        document.querySelectorAll('.collapsible').forEach(card => {
+            if(isMobile) {
+                card.classList.add('collapsed');
+            } else {
+                card.classList.remove('collapsed', 'expanded');
+                card.querySelector('.card-content').style.display = '';
+            }
+        });
+    };
+    
+    window.addEventListener('resize', handleResponsiveView);
+
+    const toggleCard = (cardId) => {
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        if (!isMobile) return;
+        const card = document.getElementById(cardId);
+        card.classList.toggle('expanded');
+    };
+
+    const renderInventory = () => {
+      const tableBody = document.getElementById('inventoryTableBody');
+      const cardsContainer = document.getElementById('inventoryCardsContainer');
+      tableBody.innerHTML = '';
+      cardsContainer.innerHTML = '';
+      inventoryForOrderContainer.innerHTML = '';
+      inventory.forEach((item) => {
+        const displayDate = new Date(item.addedDate).toLocaleString('si-LK');
+        const row = document.createElement('tr');
+        row.className = 'item-row';
+        row.innerHTML = `<td>${item.name}</td><td>${item.quantity}</td><td>රු. ${item.price.toFixed(2)}</td><td>${displayDate}</td><td style="display:flex; gap:8px;"><button onclick="editItem(${item.id})" class="small-btn btn-secondary">Edit</button><button onclick="deleteItem(${item.id})" class="small-btn btn-secondary">Delete</button></td>`;
+        tableBody.appendChild(row);
+
+        const card = document.createElement('div');
+        card.className = 'card-item';
+        card.style.cssText = 'border:1px solid rgba(52,52,52,0.04); padding:12px; border-radius:10px;';
+        card.innerHTML = `<div><p style="margin:0;font-weight:700;">${item.name}</p><p class="muted" style="margin:6px 0 0 0;"><b>ප්‍රමාණය:</b> ${item.quantity}</p><p class="muted" style="margin:4px 0 0 0;"><b>මිල:</b> රු. ${item.price.toFixed(2)}</p><p class="muted" style="margin:6px 0 0 0; font-size:12px;">එකතු කළ දිනය: ${displayDate}</p></div><div style="display:flex; gap:8px; margin-top:10px;"><button onclick="editItem(${item.id})" class="btn btn-secondary small-btn" style="flex:1;">Edit</button><button onclick="deleteItem(${item.id})" class="btn btn-secondary small-btn" style="flex:1;">Delete</button></div>`;
+        cardsContainer.appendChild(card);
+
+        if (item.quantity > 0) {
+          const orderItemCard = document.createElement('div');
+          orderItemCard.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:10px; border:1px solid rgba(52,52,52,0.04);';
+          orderItemCard.innerHTML = `<div><p style="margin:0;font-weight:600;">${item.name} <span class="muted" style="font-weight:500;">(රු. ${item.price.toFixed(2)})</span></p><p class="muted" style="margin:6px 0 0 0;">ලබා ගත හැකි ප්‍රමාණය: ${item.quantity}</p></div><div style="display:flex; gap:8px; align-items:center;"><input type="number" id="qty-${item.id}" class="input-field" style="width:86px; padding:8px;" value="1" min="1" max="${item.quantity}"><button onclick="addItemToOrder(${item.id})" type="button" class="btn btn-primary small-btn">එකතු කරන්න</button></div>`;
+          inventoryForOrderContainer.appendChild(orderItemCard);
+        }
+      });
+      totalValueDisplay.textContent = `රු. ${inventory.reduce((t, i) => t + (i.quantity * i.price), 0).toFixed(2)}`;
+    };
+
+    const renderSoldItems = () => {
+      const tableBody = document.getElementById('soldTableBody');
+      const cardsContainer = document.getElementById('soldCardsContainer');
+      tableBody.innerHTML = '';
+      cardsContainer.innerHTML = '';
+      soldItems.forEach((item) => {
+        const displayDate = new Date(item.soldDate).toLocaleString('si-LK');
+        const row = document.createElement('tr');
+        row.className = 'item-row';
+        row.innerHTML = `<td>${item.name}</td><td>${item.quantity}</td><td>රු. ${item.price.toFixed(2)}</td><td>${displayDate}</td><td style="display:flex; gap:8px;"><button onclick="editSoldItem(${item.id})" class="small-btn btn-secondary">Edit</button><button onclick="deleteSoldItem(${item.id})" class="small-btn btn-secondary">Delete</button></td>`;
+        tableBody.appendChild(row);
+
+        const card = document.createElement('div');
+        card.className = 'card-item';
+        card.style.cssText = 'border:1px solid rgba(52,52,52,0.04); padding:12px; border-radius:10px;';
+        card.innerHTML = `<div><p style="margin:0;font-weight:700;">${item.name}</p><p class="muted" style="margin:6px 0 0 0;"><b>ප්‍රමාණය:</b> ${item.quantity}</p><p class="muted" style="margin:4px 0 0 0;"><b>මිල:</b> රු. ${item.price.toFixed(2)}</p><p class="muted" style="margin:6px 0 0 0; font-size:12px;">විකුණූ දිනය: ${displayDate}</p></div><div style="display:flex; gap:8px; margin-top:10px;"><button onclick="editSoldItem(${item.id})" class="btn btn-secondary small-btn" style="flex:1;">Edit</button><button onclick="deleteSoldItem(${item.id})" class="btn btn-secondary small-btn" style="flex:1;">Delete</button></div>`;
+        cardsContainer.appendChild(card);
+      });
+      totalSoldValueDisplay.textContent = `රු. ${soldItems.reduce((t, i) => t + (i.quantity * i.price), 0).toFixed(2)}`;
+    };
+
+    const renderMonthlySales = () => {
+      const tableBody = document.getElementById('monthlySalesTableBody');
+      const cardsContainer = document.getElementById('monthlySalesCardsContainer');
+      tableBody.innerHTML = '';
+      cardsContainer.innerHTML = '';
+      Object.keys(monthlySales).sort().reverse().forEach(monthKey => {
+        const [year, month] = monthKey.split('-').map(Number);
+        const monthName = new Date(year, month - 1).toLocaleString('si-LK', { year: 'numeric', month: 'long' });
+        const value = monthlySales[monthKey];
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${monthName}</td><td>රු. ${value.toFixed(2)}</td>`;
+        tableBody.appendChild(row);
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.padding='12px';
+        card.innerHTML = `<p style="font-weight:700;margin:0;">${monthName}</p><p class="muted" style="margin:4px 0 0 0;"><b>මුළු වටිනාකම:</b> රු. ${value.toFixed(2)}</p>`;
+        cardsContainer.appendChild(card);
+      });
+    };
+
+    // --- Event Handlers & Actions ---
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newItem = {
+        id: Date.now(),
+        name: document.getElementById('itemName').value.trim(),
+        quantity: parseInt(document.getElementById('itemQuantity').value),
+        price: parseFloat(document.getElementById('itemPrice').value),
+        addedDate: new Date().toISOString()
+      };
+      inventory.push(newItem);
+      saveData();
+      render();
+      form.reset();
+      showMessage('භාණ්ඩය සාර්ථකව එකතු කරන ලදී!', 'success');
+    });
+    
+    // *** MODIFIED FUNCTION with Confirmation ***
+    const deleteItem = (id) => {
+      if (confirm('ඔබට මෙම භාණ්ඩය ඉවත් කිරීමට අවශ්‍ය බව විශ්වාසද?')) {
+        inventory = inventory.filter(item => item.id !== id);
+        saveData();
+        render();
+        showMessage('භාණ්ඩය සාර්ථකව ඉවත් කරන ලදී!', 'success');
+      }
+    };
+    
+    // *** MODIFIED FUNCTION with Confirmation ***
+    const deleteSoldItem = (id) => {
+      if (confirm('ඔබට මෙම වාර්තාව ඉවත් කිරීමට අවශ්‍ය බව විශ්වාසද?')) {
+        const itemToRemove = soldItems.find(item => item.id === id);
+        if (itemToRemove) {
+          soldItems = soldItems.filter(item => item.id !== id);
+          updateMonthlySales(itemToRemove, false);
+          saveData();
+          render();
+          showMessage('විකුණූ භාණ්ඩ වාර්තාව සාර්ථකව ඉවත් කරන ලදී.', 'success');
+        }
+      }
+    };
+
+    const editItem = (id, type = 'inventory') => {
+      const itemToEdit = type === 'inventory' ? inventory.find(i => i.id === id) : soldItems.find(i => i.id === id);
+      if (itemToEdit) {
+        document.getElementById('editItemId').value = itemToEdit.id;
+        document.getElementById('editItemType').value = type;
+        document.getElementById('editItemName').value = itemToEdit.name;
+        document.getElementById('editItemQuantity').value = itemToEdit.quantity;
+        document.getElementById('editItemPrice').value = itemToEdit.price;
+        editModal.classList.add('active');
+        editModal.setAttribute('aria-hidden','false');
+      }
+    };
+    const editSoldItem = (id) => editItem(id, 'sold');
+
+    editItemForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = parseInt(document.getElementById('editItemId').value);
+      const type = document.getElementById('editItemType').value;
+      const updatedData = {
+        name: document.getElementById('editItemName').value.trim(),
+        quantity: parseInt(document.getElementById('editItemQuantity').value),
+        price: parseFloat(document.getElementById('editItemPrice').value),
+      };
+      if (type === 'inventory') {
+        const item = inventory.find(i => i.id === id);
+        Object.assign(item, updatedData);
+      } else {
+        const oldItem = soldItems.find(i => i.id === id);
+        const updatedItem = { ...oldItem, ...updatedData };
+        updateMonthlySales(oldItem, false);
+        updateMonthlySales(updatedItem, true);
+        soldItems = soldItems.map(i => i.id === id ? updatedItem : i);
+      }
+      saveData();
+      render();
+      editModal.classList.remove('active');
+      editModal.setAttribute('aria-hidden','true');
+      showMessage('භාණ්ඩය සාර්ථකව යාවත්කාලීන කරන ලදී!', 'success');
+    });
+
+    cancelEditBtn.addEventListener('click', () => {
+      editModal.classList.remove('active');
+      editModal.setAttribute('aria-hidden','true');
+    });
+
+    // --- Order Management ---
+    const addItemToOrder = (id) => {
+        const itemInInventory = inventory.find(item => item.id === id);
+        const qtyInput = document.getElementById(`qty-${id}`);
+        const orderQuantity = parseInt(qtyInput.value);
+        if (!itemInInventory || orderQuantity <= 0 || orderQuantity > itemInInventory.quantity) {
+            return showMessage('වලංගු ප්‍රමාණයක් ඇතුලත් කරන්න!', 'error');
+        }
+        const itemInOrder = currentOrder.find(item => item.id === id);
+        if (itemInOrder) {
+            itemInOrder.quantity += orderQuantity;
+        } else {
+            currentOrder.push({ ...itemInInventory, quantity: orderQuantity });
+        }
+        updateOrderSummary();
+        showMessage('භාණ්ඩය ඇනවුමට එකතු කරන ලදී.', 'success');
+    };
+    
+    const updateOrderSummary = () => {
+      if (currentOrder.length === 0) {
+        currentOrderSummary.innerHTML = '<p class="muted" style="margin:0;">කිසිදු භාණ්ඩයක් තෝරාගෙන නොමැත.</p>';
+      } else {
+        const list = currentOrder.map(item => `<li>${item.name} - ${item.quantity} x රු. ${item.price.toFixed(2)}</li>`).join('');
+        currentOrderSummary.innerHTML = `<ul style="margin:0; padding-left:18px;">${list}</ul>`;
+      }
+      const total = currentOrder.reduce((t, i) => t + (i.quantity * i.price), 0);
+      currentOrderValueDisplay.textContent = `රු. ${total.toFixed(2)}`;
+    };
+
+    orderForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (currentOrder.length === 0) return showMessage('ඇනවුමක් සටහන් කිරීමට භාණ්ඩයක් තෝරන්න!', 'error');
+      const soldDate = new Date().toISOString();
+      currentOrder.forEach(orderItem => {
+        const inventoryItem = inventory.find(invItem => invItem.id === orderItem.id);
+        if (inventoryItem) inventoryItem.quantity -= orderItem.quantity;
+        const soldItem = { ...orderItem, id: Date.now(), soldDate };
+        soldItems.push(soldItem);
+        updateMonthlySales(soldItem, true);
+      });
+      currentOrder = [];
+      saveData();
+      render();
+      showMessage('ඇනවුම සාර්ථකව සටහන් කරන ලදී!', 'success');
+    });
+    
+    // --- Utility Functions ---
+    const showMessage = (message, type) => {
+      messageBox.textContent = message;
+      messageBox.className = 'alert ' + (type === 'success' ? 'alert-success' : 'alert-error');
+      setTimeout(() => messageBox.className = 'hidden', 3000);
+    };
+
+    const saveData = () => {
+      localStorage.setItem('inventoryData', JSON.stringify({ inventory, soldItems, monthlySales }));
+    };
+
+    const loadData = () => {
+      const data = JSON.parse(localStorage.getItem('inventoryData'));
+      if (data) {
+        inventory = data.inventory || [];
+        soldItems = data.soldItems || [];
+        monthlySales = data.monthlySales || {};
+      }
+    };
+    
+    // --- Data Backup & Restore ---
+    const backupData = () => {
+      const dataStr = JSON.stringify({ inventory, soldItems, monthlySales }, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `suweema_backup_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showMessage('දත්ත සාර්ථකව පිටපත් කරන ලදී!', 'success');
+    };
+
+    restoreInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const loadedData = JSON.parse(event.target.result);
+          if (loadedData.inventory && loadedData.soldItems && loadedData.monthlySales) {
+            inventory = loadedData.inventory;
+            soldItems = loadedData.soldItems;
+            monthlySales = loadedData.monthlySales;
+            saveData();
+            render();
+            showMessage('දත්ත සාර්ථකව නැවත පූරණය කරන ලදී!', 'success');
+          } else { throw new Error('Invalid file structure'); }
+        } catch (err) {
+          showMessage('ගොනුව කියවීමේ දෝෂයක්. කරුණාකර නිවැරදි JSON ගොනුවක් තෝරන්න.', 'error');
+        }
+      };
+      reader.readAsText(file);
+    });
+    
+    // --- PWA Service Worker Registration ---
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(registration => {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, err => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+
+    // --- Initial Load ---
+    loadData();
+    render();
+  </script>
+</body>
+</html>

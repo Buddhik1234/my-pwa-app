@@ -1,0 +1,21 @@
+{
+  "name": "Suweema Bag Center",
+  "short_name": "Suweema",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f1ed92",
+  "description": "Inventory and Order management for Suweema Bag Center.",
+  "icons": [
+    {
+      "src": "images/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
