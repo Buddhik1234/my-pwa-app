@@ -1,9 +1,8 @@
 const CACHE_NAME = 'suweema-bag-center-v1';
 const urlsToCache = [
   '/',
-  '/index.html', // Add the actual name of your html file if different
-  'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap'
+  '/index.html',
+  '/manifest.json'
 ];
 
 self.addEventListener('install', event => {
@@ -21,9 +20,9 @@ self.addEventListener('fetch', event => {
     caches.match(event.request)
       .then(response => {
         if (response) {
-          return response; // Serve from cache
+          return response;
         }
-        return fetch(event.request); // Fetch from network
+        return fetch(event.request);
       }
     )
   );
